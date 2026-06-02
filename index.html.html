@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a2f5e">
+<title>Vak-Sözlük</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1a2f5e; --blue:#2563eb; --accent:#f97316;
+    --bg:#eef2f7; --white:#fff; --text:#1e293b;
+    --muted:#64748b; --light:#f1f5f9; --border:#e2e8f0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);max-width:480px;margin:0 auto;min-height:100vh}
+
+  /* HEADER */
+  .header{background:linear-gradient(145deg,#1a2f5e,#2563eb);padding:48px 20px 56px;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+  .header::after{content:'';position:absolute;bottom:-30px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.04)}
+  .header-inner{position:relative;z-index:1}
+  .header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .header-label{font-size:10px;font-weight:700;letter-spacing:3px;color:#93c5fd;text-transform:uppercase;margin-bottom:6px}
+  .header-title{font-size:30px;font-weight:900;color:#fff;letter-spacing:-1.5px}
+  .header-sub{font-size:12px;color:#bfdbfe;margin-top:5px;font-weight:600}
+  .hdr-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:9px 13px;color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);transition:all .2s;white-space:nowrap}
+  .hdr-btn.active{background:#f97316;border-color:#f97316}
+
+  .content{padding:0 16px;margin-top:-28px;padding-bottom:40px}
+
+  /* DAILY CARD */
+  .daily-card{background:linear-gradient(135deg,#f97316,#ef4444);border-radius:22px;padding:20px;margin-bottom:10px;box-shadow:0 10px 28px rgba(249,115,22,.35);position:relative;overflow:hidden}
+  .daily-card::after{content:'🚌';position:absolute;right:14px;bottom:-4px;font-size:48px;opacity:.12;pointer-events:none}
+  .daily-label{font-size:10px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.7);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+  .daily-counter{font-size:10px;font-weight:700;color:rgba(255,255,255,.5)}
+  .daily-nl{font-size:22px;font-weight:900;color:#fff;line-height:1.3;margin-bottom:6px;padding-right:54px;cursor:pointer}
+  .daily-tr{font-size:13px;color:rgba(255,255,255,.88);padding-right:54px}
+  .daily-actions{display:flex;align-items:center;justify-content:space-between;margin-top:14px;gap:8px}
+  .daily-speak-btn{background:rgba(255,255,255,.2);border:none;border-radius:12px;padding:10px 14px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;transition:all .2s;flex:1}
+  .daily-speak-btn:active{transform:scale(.96);background:rgba(255,255,255,.35)}
+  .daily-next-btn{background:rgba(255,255,255,.25);border:1.5px solid rgba(255,255,255,.4);border-radius:12px;padding:10px 14px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;transition:all .2s;flex:1;justify-content:center}
+  .daily-next-btn:active{transform:scale(.96)}
+  .daily-teacher-btn{background:rgba(255,255,255,.2);border:none;border-radius:12px;padding:10px 14px;color:#fff;cursor:pointer;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;transition:all .2s;flex:1;text-align:center}
+  .daily-teacher-btn:active{transform:scale(.96)}
+
+  /* DAILY HISTORY */
+  .daily-history{background:var(--white);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+  .history-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+  .history-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+  .history-item:last-child{border-bottom:none;padding-bottom:0}
+  .history-item:first-child{padding-top:0}
+  .history-nl{font-size:13px;font-weight:700;color:var(--text)}
+  .history-tr{font-size:11px;color:var(--muted);margin-top:1px}
+  .history-speak{background:none;border:none;font-size:16px;cursor:pointer;padding:4px;opacity:.7}
+
+  /* STATS */
+  .stats-bar{display:flex;gap:10px;margin-bottom:14px}
+  .stat-box{flex:1;background:var(--white);border-radius:14px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .stat-num{font-size:20px;font-weight:900;color:var(--blue)}
+  .stat-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+  .ai-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:14px;padding:12px 14px;margin-bottom:14px}
+  .ai-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.6);flex-shrink:0;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 6px rgba(34,197,94,.4)}50%{box-shadow:0 0 14px rgba(34,197,94,.8)}}
+  .ai-banner-text{font-size:12px;font-weight:700;color:#166534;flex:1}
+  .ai-banner-sub{font-size:10px;color:#16a34a;font-weight:600;margin-top:2px}
+
+  /* SEARCH + CATS */
+  .search-wrap{position:relative;margin-bottom:12px}
+  .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+  .search-input{width:100%;padding:14px 16px 14px 44px;border-radius:16px;border:2px solid var(--border);background:var(--white);font-family:'Sora',sans-serif;font-size:15px;color:var(--text);outline:none;box-shadow:0 2px 10px rgba(0,0,0,.06);transition:border-color .2s}
+  .search-input:focus{border-color:var(--blue)}
+  .search-input::placeholder{color:#94a3b8}
+  .cats{display:flex;overflow-x:auto;gap:8px;padding-bottom:12px;scrollbar-width:none}
+  .cats::-webkit-scrollbar{display:none}
+  .cat-btn{white-space:nowrap;padding:9px 18px;border-radius:12px;border:none;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:var(--white);color:var(--muted);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .cat-btn.active{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+  .result-count{font-size:12px;color:#94a3b8;font-weight:600;margin-bottom:12px}
+
+  /* CARDS */
+  .cards{display:flex;flex-direction:column;gap:10px}
+  .card{background:var(--white);border-radius:18px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1.5px solid var(--border);position:relative;animation:fadeUp .3s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .card-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .card-num{font-size:10px;font-weight:700;color:#94a3b8}
+  .card-cat{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:6px}
+  .card-nl{font-size:18px;font-weight:800;color:#1e293b;line-height:1.4;padding-right:76px;margin-bottom:6px}
+  .card-tr{font-size:13px;color:#64748b;padding-right:76px;border-top:1px solid #f1f5f9;padding-top:6px}
+  .card-actions{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:7px;align-items:center}
+  .speak-btn{background:var(--light);border:none;border-radius:12px;padding:10px;cursor:pointer;color:var(--muted);transition:all .2s;display:flex;align-items:center;justify-content:center}
+  .speak-btn.playing{background:#dbeafe;color:var(--blue);transform:scale(1.12)}
+  .fav-btn{background:transparent;border:none;cursor:pointer;padding:4px;font-size:19px;transition:transform .2s;line-height:1}
+  .fav-btn:active{transform:scale(1.3)}
+  .teacher-btn{background:transparent;border:none;cursor:pointer;padding:4px;font-size:19px;transition:transform .2s;line-height:1}
+  .teacher-btn.open{filter:drop-shadow(0 0 5px #22c55e)}
+
+  /* QUIZ */
+  .card.quiz{cursor:pointer}
+  .quiz-hint{font-size:11px;color:#cbd5e1;margin-top:8px;font-weight:600}
+
+  /* TEACHER PANEL */
+  .teacher-panel{margin-top:14px;background:#fff;border:1.5px solid #bbf7d0;border-radius:16px;overflow:hidden;animation:fadeUp .3s ease both}
+  .teacher-tabs{display:flex;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+  .teacher-tab{flex:1;padding:10px 6px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-align:center}
+  .teacher-tab.active{color:#065f46;border-bottom-color:#22c55e;background:#fff}
+  .teacher-body{padding:14px}
+  .teacher-loading{display:flex;align-items:center;gap:10px;color:#059669;font-size:13px;font-weight:700;padding:16px}
+  .loader{width:18px;height:18px;border:2.5px solid #bbf7d0;border-top-color:#059669;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .teacher-section{display:none;font-size:13px;color:#1e293b;line-height:1.8;white-space:pre-wrap}
+  .teacher-section.active{display:block}
+  .teacher-error{font-size:12px;color:#dc2626;font-weight:600;line-height:1.6;padding:14px}
+
+  /* TELAFFUZ KARTI */
+  .pronun-box{background:#f0fdf4;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .pronun-word{font-size:16px;font-weight:800;color:#065f46}
+  .pronun-read{font-size:13px;color:#16a34a;font-style:italic;margin-top:2px}
+  .pronun-tip{font-size:11px;color:#4ade80;margin-top:4px}
+
+  /* KELİME KARTI */
+  .word-box{background:#eff6ff;border-radius:12px;padding:10px 14px;margin-bottom:6px}
+  .word-nl{font-size:15px;font-weight:800;color:#1e40af}
+  .word-tr{font-size:13px;color:#3b82f6;margin-top:2px}
+  .word-type{display:inline-block;font-size:10px;font-weight:700;background:#bfdbfe;color:#1e40af;padding:1px 7px;border-radius:6px;margin-top:4px;text-transform:uppercase}
+
+  /* QUIZ ALANI (öğretmen içi) */
+  .mini-quiz{background:#fefce8;border:1.5px solid #fde047;border-radius:12px;padding:14px;margin-top:4px}
+  .mini-quiz-q{font-size:13px;font-weight:700;color:#854d0e;margin-bottom:10px}
+  .mini-quiz-opts button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:10px;border:1.5px solid #fde047;background:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:6px;transition:all .2s;color:#1e293b}
+  .mini-quiz-opts button.correct{background:#dcfce7;border-color:#22c55e;color:#065f46}
+  .mini-quiz-opts button.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+  .mini-quiz-result{font-size:12px;font-weight:700;margin-top:8px}
+
+  .empty{text-align:center;padding:48px 20px;color:var(--muted)}
+  .empty-icon{font-size:48px;margin-bottom:12px}
+  .empty-text{font-size:15px;font-weight:700;line-height:1.6}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="header-label">🚌 Otobüs Sürücüsü</div>
+        <div class="header-title">Vak-Sözlük</div>
+        <div class="header-sub">100 ifade · Hollandaca / Türkçe</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button class="hdr-btn" id="quizToggle" onclick="toggleQuiz()">🎯 Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- DAILY CARD -->
+  <div class="daily-card">
+    <div class="daily-label">
+      <span>💡 Günün İfadesi</span>
+      <span class="daily-counter" id="dailyCounter"></span>
+    </div>
+    <div class="daily-nl" id="dailyNl" onclick="speakText(this.textContent,'daily')"></div>
+    <div class="daily-tr" id="dailyTr"></div>
+    <div class="daily-actions">
+      <button class="daily-speak-btn" onclick="speakText(document.getElementById('dailyNl').textContent,'daily')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        Dinle
+      </button>
+      <button class="daily-teacher-btn" onclick="askDailyTeacher()">🎓 Analiz</button>
+      <button class="daily-next-btn" onclick="nextDaily()">⟳ Yeni</button>
+    </div>
+  </div>
+
+  <!-- DAILY TEACHER PANEL (günün ifadesine özel) -->
+  <div id="dailyTeacherWrap"></div>
+
+  <!-- DAILY HISTORY -->
+  <div class="daily-history" id="historyBox" style="display:none">
+    <div class="history-title">📚 Görülen İfadeler</div>
+    <div id="historyList"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-box"><div class="stat-num" id="statTotal">100</div><div class="stat-lbl">İfade</div></div>
+    <div class="stat-box"><div class="stat-num" id="statFavs">0</div><div class="stat-lbl">Favori</div></div>
+    <div class="stat-box"><div class="stat-num" id="statSeen">0</div><div class="stat-lbl">Görülen</div></div>
+  </div>
+
+  <div class="ai-banner">
+    <div class="ai-dot"></div>
+    <div style="flex:1">
+      <div class="ai-banner-text">Gemini AI Öğretmen aktif</div>
+      <div class="ai-banner-sub">🔊 Ses · ⭐ Favori · 🎓 Gramer · 📝 Kelime testi</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:11px;font-weight:800;color:#166534">💾 <span id="cacheCount">0</span> ses</div>
+      <button onclick="clearAudioCache()" style="font-size:10px;font-weight:700;color:#16a34a;background:none;border:none;cursor:pointer;padding:2px 0;font-family:'Sora',sans-serif">🗑️ Temizle</button>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="searchInput" placeholder="Hollandaca veya Türkçe ara..." oninput="renderCards()" autocomplete="off" autocorrect="off" spellcheck="false">
+  </div>
+  <div class="cats" id="catButtons"></div>
+  <div class="result-count" id="resultCount"></div>
+  <div class="cards" id="cardsContainer"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── API KEY ── Değiştirmek için sadece bu satırı güncelle:
+const GEMINI_API_KEY = "AIzaSyAIFb_MuCmEoRXbXrS-iNGdFqkBWCKmxlc";
+
+const DATA = [
+  { nl:"Goedemorgen!", tr:"Günaydın!", cat:"Selamlaşma" },
+  { nl:"Goedemiddag!", tr:"Tünaydın!", cat:"Selamlaşma" },
+  { nl:"Goedenavond!", tr:"İyi akşamlar!", cat:"Selamlaşma" },
+  { nl:"Hallo!", tr:"Merhaba!", cat:"Selamlaşma" },
+  { nl:"Hoi!", tr:"Selam!", cat:"Selamlaşma" },
+  { nl:"Alstublieft.", tr:"Buyrun / Lütfen.", cat:"Selamlaşma" },
+  { nl:"Dank u wel.", tr:"Teşekkür ederim.", cat:"Selamlaşma" },
+  { nl:"Graag gedaan.", tr:"Bir şey değil.", cat:"Selamlaşma" },
+  { nl:"Tot ziens!", tr:"Görüşmek üzere!", cat:"Selamlaşma" },
+  { nl:"Dag!", tr:"İyi günler / Hoşça kal.", cat:"Selamlaşma" },
+  { nl:"Goedenacht.", tr:"İyi geceler.", cat:"Selamlaşma" },
+  { nl:"Hoe gaat het?", tr:"Nasılsınız?", cat:"Selamlaşma" },
+  { nl:"Prima, bedankt.", tr:"Harika, teşekkürler.", cat:"Selamlaşma" },
+  { nl:"Excuseer mij.", tr:"Affedersiniz.", cat:"Selamlaşma" },
+  { nl:"Het spijt me.", tr:"Üzgünüm.", cat:"Selamlaşma" },
+  { nl:"Heeft u een kaartje?", tr:"Biletiniz var mı?", cat:"Bilet" },
+  { nl:"U moet inchecken.", tr:"Giriş yapmalısınız.", cat:"Bilet" },
+  { nl:"Vergeet niet uit te checken.", tr:"Çıkışta okutmayı unutmayın.", cat:"Bilet" },
+  { nl:"De kaartlezer is daar.", tr:"Kart okuyucu orada.", cat:"Bilet" },
+  { nl:"Uw kaart is niet geldig.", tr:"Kartınız geçerli değil.", cat:"Bilet" },
+  { nl:"U heeft niet genoeg saldo.", tr:"Bakiyeniz yetersiz.", cat:"Bilet" },
+  { nl:"U kunt met uw bankpas betalen.", tr:"Banka kartınızla ödeyebilirsiniz.", cat:"Bilet" },
+  { nl:"Het spijt me, wij accepteren geen contant geld.", tr:"Üzgünüm, nakit para kabul etmiyoruz.", cat:"Bilet" },
+  { nl:"Mag ik uw vervoersbewijs zien?", tr:"Biletinizi görebilir miyim?", cat:"Bilet" },
+  { nl:"Uw abonnement is verlopen.", tr:"Abonmanlığınızın süresi dolmuş.", cat:"Bilet" },
+  { nl:"Een enkeltje alstublieft.", tr:"Tek yön bir bilet lütfen.", cat:"Bilet" },
+  { nl:"De automaat is defect.", tr:"Otomat bozuk.", cat:"Bilet" },
+  { nl:"Heeft u een legitimatiebewijs?", tr:"Kimliğiniz var mı?", cat:"Bilet" },
+  { nl:"U moet een boete betalen.", tr:"Ceza ödemeniz gerekiyor.", cat:"Bilet" },
+  { nl:"Kinderticket.", tr:"Çocuk bileti.", cat:"Bilet" },
+  { nl:"Waar gaat u naartoe?", tr:"Nereye gidiyorsunuz?", cat:"Güzergah" },
+  { nl:"Deze bus gaat naar het centrum.", tr:"Bu otobüs merkeze gider.", cat:"Güzergah" },
+  { nl:"De volgende halte is...", tr:"Sonraki durak...", cat:"Güzergah" },
+  { nl:"Kunt u een stapje naar achteren doen?", tr:"Bir adım arkaya kayar mısınız?", cat:"Güzergah" },
+  { nl:"U moet hier uitstappen.", tr:"Burada inmelisiniz.", cat:"Güzergah" },
+  { nl:"U moet overstappen op lijn 5.", tr:"5 numaralı hatta aktarma yapmalısınız.", cat:"Güzergah" },
+  { nl:"Dit is de laatste halte.", tr:"Bu son durak.", cat:"Güzergah" },
+  { nl:"Iedereen uitstappen alstublieft.", tr:"Herkes insin lütfen.", cat:"Güzergah" },
+  { nl:"Nee, deze bus gaat de andere kant op.", tr:"Hayır, bu otobüs diğer yöne gider.", cat:"Güzergah" },
+  { nl:"De bus stopt hier niet.", tr:"Otobüs burada durmaz.", cat:"Güzergah" },
+  { nl:"U bent in de verkeerde bus.", tr:"Yanlış otobüstesiniz.", cat:"Güzergah" },
+  { nl:"Hoe ver is het nog?", tr:"Daha ne kadar var?", cat:"Güzergah" },
+  { nl:"Bij de volgende stop.", tr:"Bir sonraki durakta.", cat:"Güzergah" },
+  { nl:"Linksaf bij de stoplichten.", tr:"Trafik ışıklarından sola.", cat:"Güzergah" },
+  { nl:"Rechtsaf.", tr:"Sağa.", cat:"Güzergah" },
+  { nl:"Rechtdoor blijven rijden.", tr:"Düz gitmeye devam edin.", cat:"Güzergah" },
+  { nl:"De bushalte is om de hoek.", tr:"Otobüs durağı köşede.", cat:"Güzergah" },
+  { nl:"Tegenover het station.", tr:"İstasyonun karşısında.", cat:"Güzergah" },
+  { nl:"Verderop.", tr:"İleride.", cat:"Güzergah" },
+  { nl:"Teruglopen.", tr:"Geri yürümek.", cat:"Güzergah" },
+  { nl:"Wilt u doorlopen naar achteren?", tr:"Arkaya doğru ilerler misiniz?", cat:"Güvenlik" },
+  { nl:"Houd u goed vast.", tr:"Sıkı tutunun.", cat:"Güvenlik" },
+  { nl:"We gaan vertrekken.", tr:"Hareket ediyoruz.", cat:"Güvenlik" },
+  { nl:"Blijf achter de streep staan.", tr:"Lütfen çizginin gerisinde durun.", cat:"Güvenlik" },
+  { nl:"Niet roken in de bus.", tr:"Otobüste sigara içilmez.", cat:"Güvenlik" },
+  { nl:"Zitten alstublieft.", tr:"Oturun lütfen.", cat:"Güvenlik" },
+  { nl:"De bus is in beweging.", tr:"Otobüs hareket halinde.", cat:"Güvenlik" },
+  { nl:"Let op de drempel.", tr:"Basamağa dikkat edin.", cat:"Güvenlik" },
+  { nl:"Niet eten of drinken.", tr:"Yemek yemek veya içmek yasaktır.", cat:"Güvenlik" },
+  { nl:"Houd de doorgang vrij.", tr:"Geçiş yolunu boş bırakın.", cat:"Güvenlik" },
+  { nl:"Geen voeten op de bank.", tr:"Ayakları koltuğa koymayın.", cat:"Güvenlik" },
+  { nl:"Honden moeten aangelijnd zijn.", tr:"Köpekler bağlı olmalıdır.", cat:"Güvenlik" },
+  { nl:"Geen overlast veroorzaken.", tr:"Rahatsızlık vermeyin.", cat:"Güvenlik" },
+  { nl:"Camerabewaking aanwezig.", tr:"Kamera kaydı yapılmaktadır.", cat:"Güvenlik" },
+  { nl:"Bij nood, sla de ruit in.", tr:"Acil durumda camı kırın.", cat:"Güvenlik" },
+  { nl:"Er is een storing op het traject.", tr:"Güzergahta bir aksaklık var.", cat:"Arıza" },
+  { nl:"De bus is helaas defect.", tr:"Otobüs maalesef arızalı.", cat:"Arıza" },
+  { nl:"We hebben een kleine vertraging.", tr:"Küçük bir gecikmemiz var.", cat:"Arıza" },
+  { nl:"Ik wacht op toestemming.", tr:"İzin bekliyorum.", cat:"Arıza" },
+  { nl:"Iedereen moet overstappen.", tr:"Herkes aktarma yapmalı.", cat:"Arıza" },
+  { nl:"Mijn excuses voor het ongemak.", tr:"Verdiğimiz rahatsızlık için özür dilerim.", cat:"Arıza" },
+  { nl:"De weg is afgezet.", tr:"Yol kapalı/barikat var.", cat:"Arıza" },
+  { nl:"We rijden een omleiding.", tr:"Sapaktan/başka yoldan gidiyoruz.", cat:"Arıza" },
+  { nl:"File op de snelweg.", tr:"Otoyolda trafik sıkışıklığı.", cat:"Arıza" },
+  { nl:"Werkzaamheden.", tr:"Yol çalışması.", cat:"Arıza" },
+  { nl:"Heeft u hulp nodig?", tr:"Yardıma ihtiyacınız var mı?", cat:"Yardım" },
+  { nl:"Ik zal de plank neerleggen.", tr:"Rampayı indireceğim.", cat:"Yardım" },
+  { nl:"Rolstoelgebruikers hebben voorrang.", tr:"Tekerlekli sandalyelilerin önceliği vardır.", cat:"Yardım" },
+  { nl:"Kunt u een plaats vrijmaken?", tr:"Yer verir misiniz?", cat:"Yardım" },
+  { nl:"Is alles in orde?", tr:"Her şey yolunda mı?", cat:"Yardım" },
+  { nl:"Momentje alstublieft.", tr:"Bir saniye lütfen.", cat:"Yardım" },
+  { nl:"Kalm blijven.", tr:"Sakin kalın.", cat:"Yardım" },
+  { nl:"Hulp is onderweg.", tr:"Yardım yolda.", cat:"Yardım" },
+  { nl:"Pass op.", tr:"Dikkat et.", cat:"Yardım" },
+  { nl:"Zit u comfortabel?", tr:"Rahat mısınız?", cat:"Yardım" },
+  { nl:"Centrale, hoort u mij?", tr:"Merkez, beni duyuyor musunuz?", cat:"Telsiz" },
+  { nl:"Begrepen, over.", tr:"Anlaşıldı, tamam.", cat:"Telsiz" },
+  { nl:"Kunt u dat herhalen?", tr:"Tekrar edebilir misiniz?", cat:"Telsiz" },
+  { nl:"Lage oliedruk.", tr:"Düşük yağ basıncı.", cat:"Teknik" },
+  { nl:"Controleer de bandenspanning.", tr:"Lastik basıncını kontrol et.", cat:"Teknik" },
+  { nl:"De accu is bijna leeg.", tr:"Akü bitmek üzere.", cat:"Teknik" },
+  { nl:"De remmen werken niet.", tr:"Frenler çalışmıyor.", cat:"Teknik" },
+  { nl:"De airco is defect.", tr:"Klima bozuk.", cat:"Teknik" },
+  { nl:"De achterdeur blokkeert.", tr:"Arka kapı sıkışıyor.", cat:"Mekanik" },
+  { nl:"Reset de bus.", tr:"Otobüsü resetle.", cat:"Mekanik" },
+  { nl:"Spiegels afstellen.", tr:"Aynaları ayarla.", cat:"Mekanik" },
+  { nl:"Vergrendel de deuren.", tr:"Kapıları kilitle.", cat:"Mekanik" },
+  { nl:"Kaartlezer start op.", tr:"Kart okuyucu açılıyor.", cat:"Mekanik" },
+  { nl:"Systeemfout.", tr:"Sistem hatası.", cat:"Mekanik" },
+  { nl:"Klaar voor vertrek.", tr:"Kalkışa hazır.", cat:"Mekanik" }
+];
+
+const CAT_COLORS = {
+  Selamlaşma:{bg:"#dbeafe",text:"#1e40af"},Bilet:{bg:"#fef3c7",text:"#92400e"},
+  Güzergah:{bg:"#d1fae5",text:"#065f46"},Güvenlik:{bg:"#fee2e2",text:"#991b1b"},
+  Arıza:{bg:"#ede9fe",text:"#5b21b6"},Yardım:{bg:"#fce7f3",text:"#9d174d"},
+  Telsiz:{bg:"#e0f2fe",text:"#155e75"},Teknik:{bg:"#f1f5f9",text:"#334155"},
+  Mekanik:{bg:"#fff7ed",text:"#9a3412"}
+};
+
+// ── STATE ──
+let currentCat = "Hepsi";
+let quizMode = false;
+let quizFlipped = new Set();
+let favorites = [];
+let seenHistory = []; // günün ifadesi geçmişi
+let currentDailyIdx = -1;
+let dailyTeacherData = null; // cache
+let teacherCache = {};
+let teacherOpen = new Set();
+let toastTimer;
+
+// ── STORAGE ──
+function loadState() {
+  try { favorites = JSON.parse(localStorage.getItem("vak_favorites") || "[]"); } catch { favorites=[]; }
+  try { seenHistory = JSON.parse(localStorage.getItem("vak_history") || "[]"); } catch { seenHistory=[]; }
+  try {
+    const saved = localStorage.getItem("vak_daily_idx");
+    const savedDate = localStorage.getItem("vak_daily_date");
+    const today = new Date().toDateString();
+    if (saved !== null && savedDate === today) {
+      currentDailyIdx = parseInt(saved);
+    }
+  } catch {}
+}
+function saveState() {
+  try { localStorage.setItem("vak_favorites", JSON.stringify(favorites)); } catch {}
+  try { localStorage.setItem("vak_history", JSON.stringify(seenHistory)); } catch {}
+  try {
+    localStorage.setItem("vak_daily_idx", currentDailyIdx);
+    localStorage.setItem("vak_daily_date", new Date().toDateString());
+  } catch {}
+}
+
+// ── GÜNÜN İFADESİ ──
+function initDaily() {
+  if (currentDailyIdx === -1) {
+    const d = new Date();
+    currentDailyIdx = (d.getDate() + d.getMonth() * 31 + d.getFullYear()) % DATA.length;
+  }
+  showDaily(currentDailyIdx);
+}
+
+function showDaily(idx) {
+  const item = DATA[idx];
+  document.getElementById("dailyNl").textContent = item.nl;
+  document.getElementById("dailyTr").textContent = item.tr;
+  document.getElementById("dailyCounter").textContent = `#${idx+1}`;
+  document.getElementById("dailyTeacherWrap").innerHTML = "";
+  dailyTeacherData = null;
+
+  // Geçmişe ekle (tekrar yoksa)
+  if (!seenHistory.find(h => h.idx === idx)) {
+    seenHistory.unshift({ idx, nl: item.nl, tr: item.tr });
+    if (seenHistory.length > 30) seenHistory.pop();
+    saveState();
+  }
+  renderHistory();
+  document.getElementById("statSeen").textContent = seenHistory.length;
+}
+
+function nextDaily() {
+  // Henüz görülmemiş rastgele bir ifade seç
+  const seenIdxs = new Set(seenHistory.map(h => h.idx));
+  const unseen = DATA.map((_,i)=>i).filter(i => !seenIdxs.has(i));
+  if (unseen.length > 0) {
+    currentDailyIdx = unseen[Math.floor(Math.random() * unseen.length)];
+  } else {
+    // Hepsini gördüyse tamamen rastgele
+    currentDailyIdx = Math.floor(Math.random() * DATA.length);
+  }
+  saveState();
+  showDaily(currentDailyIdx);
+  showToast("✨ Yeni ifade!");
+}
+
+function renderHistory() {
+  const box = document.getElementById("historyBox");
+  const list = document.getElementById("historyList");
+  if (seenHistory.length <= 1) { box.style.display="none"; return; }
+  box.style.display="block";
+  // İlk kayıt zaten daily'de gösteriliyor, geri kalanları listele
+  list.innerHTML = seenHistory.slice(1, 8).map(h => `
+    <div class="history-item" onclick="speakText('${h.nl.replace(/'/g,"\\'")}','h${h.idx}')">
+      <div>
+        <div class="history-nl">${h.nl}</div>
+        <div class="history-tr">${h.tr}</div>
+      </div>
+      <button class="history-speak" onclick="event.stopPropagation();speakText('${h.nl.replace(/'/g,"\\'")}','h${h.idx}')">🔊</button>
+    </div>`).join("");
+}
+
+// ── DAILY TEACHER ──
+async function askDailyTeacher() {
+  const wrap = document.getElementById("dailyTeacherWrap");
+  if (wrap.innerHTML && dailyTeacherData) {
+    wrap.innerHTML = ""; dailyTeacherData = null; return;
+  }
+  const item = DATA[currentDailyIdx];
+  wrap.innerHTML = `<div style="background:#fff;border-radius:16px;border:1.5px solid #bbf7d0;margin-bottom:14px"><div class="teacher-loading"><div class="loader"></div>Analiz ediliyor...</div></div>`;
+  const result = await fetchTeacher(item);
+  if (result.error) {
+    wrap.innerHTML = `<div style="background:#fff;border-radius:16px;border:1.5px solid #fca5a5;padding:14px"><div class="teacher-error">❌ ${escHtml(result.error)}</div></div>`;
+  } else {
+    dailyTeacherData = result;
+    wrap.innerHTML = buildTeacherPanel("daily", item, result);
+    activateTab("daily", "telaffuz");
+  }
+}
+
+// ── KART TEACHER ──
+async function askTeacher(idx) {
+  const panelId = `tp-${idx}`;
+  const card = document.querySelector(`[data-cardidx="${idx}"]`);
+  const btn = card ? card.querySelector(".teacher-btn") : null;
+  if (teacherOpen.has(idx)) {
+    teacherOpen.delete(idx);
+    const p = document.getElementById(panelId);
+    if (p) p.remove();
+    if (btn) btn.classList.remove("open");
+    return;
+  }
+  teacherOpen.add(idx);
+  if (btn) btn.classList.add("open");
+  let panel = document.getElementById(panelId);
+  if (!panel) { panel = document.createElement("div"); panel.id = panelId; if(card) card.appendChild(panel); }
+
+  if (teacherCache[idx]) {
+    panel.outerHTML = buildTeacherPanel(idx, DATA[idx], teacherCache[idx]);
+    activateTab(idx, "telaffuz");
+    return;
+  }
+  panel.innerHTML = `<div class="teacher-panel"><div class="teacher-loading"><div class="loader"></div>Analiz ediliyor...</div></div>`;
+  const result = await fetchTeacher(DATA[idx]);
+  if (result.error) {
+    panel.innerHTML = `<div class="teacher-panel"><div class="teacher-error">❌ ${escHtml(result.error)}</div></div>`;
+    teacherOpen.delete(idx); if(btn) btn.classList.remove("open");
+  } else {
+    teacherCache[idx] = result;
+    panel.outerHTML = buildTeacherPanel(idx, DATA[idx], result);
+    activateTab(idx, "telaffuz");
+  }
+}
+
+// ── GEMINI API ──
+async function fetchTeacher(item) {
+  // Tüm property name'leri ASCII - Türkçe karakter YOK
+  const prompt = `Analyze this Dutch phrase for a Turkish bus driver student. Respond ONLY with valid JSON, no markdown, no explanation, no intro text.
+
+PHRASE: "${item.nl}"
+TURKISH MEANING: "${item.tr}"
+
+Return exactly this JSON structure (all property names in English/ASCII, values in Turkish):
+{"telaffuz":[{"kelime":"word","okuyus":"turkish-letter pronunciation","ipucu":"tip"}],"kelimeler":[{"nl":"word","tr":"meaning","tur":"noun/verb/pronoun/adj/adverb/preposition"}],"dilbilgisi":"Explain sentence structure, verb conjugation, formal(u/uw) or informal(jij), word order in Turkish. 3-5 sentences.","kullanim":"When and how to use this, stress and tone. 2-3 sentences.","alternatifler":["alternative 1","alternative 2"],"hata":"Most common mistake Turkish speakers make","quiz":[{"soru":"question","dogru":"correct answer","yanlis":["wrong1","wrong2"]}]}`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{
+            maxOutputTokens:900,
+            temperature:0.2,
+            responseMimeType:"application/json"
+          }
+        })
+      }
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = data.candidates[0].content.parts[0].text;
+    // Agresif temizleme
+    let clean = raw
+      .replace(/```json/gi,"")
+      .replace(/```/g,"")
+      .trim();
+    // İlk { ile son } arasını al
+    const start = clean.indexOf("{");
+    const end = clean.lastIndexOf("}");
+    if (start === -1 || end === -1) throw new Error("Geçerli JSON bulunamadı");
+    clean = clean.slice(start, end+1);
+    return JSON.parse(clean);
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+// ── TEACHER PANEL HTML ──
+function buildTeacherPanel(id, item, d) {
+  const tabs = ["telaffuz","kelimeler","dilbilgisi","quiz"];
+  const tabLabels = {"telaffuz":"🔤 Telaffuz","kelimeler":"📖 Kelimeler","dilbilgisi":"🏗️ Dilbilgisi","quiz":"📝 Test"};
+
+  const telaffuzHtml = (d.telaffuz||[]).map(t=>`
+    <div class="pronun-box">
+      <div class="pronun-word">${escHtml(t.kelime)}</div>
+      <div class="pronun-read">→ "${escHtml(t.okuyus || t.okunuş || '')}"</div>
+      ${t.ipucu?`<div class="pronun-tip">💡 ${escHtml(t.ipucu)}</div>`:''}
+    </div>`).join("");
+
+  const kelimelerHtml = (d.kelimeler||[]).map(k=>`
+    <div class="word-box">
+      <div class="word-nl">${escHtml(k.nl)}</div>
+      <div class="word-tr">${escHtml(k.tr)}</div>
+      <span class="word-type">${escHtml(k.tur||'')}</span>
+    </div>`).join("");
+
+  const dilbilgisiHtml = `
+    <div style="font-size:13px;line-height:1.8;color:#1e293b;margin-bottom:12px">${escHtml(d.dilbilgisi||'')}</div>
+    ${d.kullanim?`<div style="background:#eff6ff;border-radius:10px;padding:12px;font-size:13px;color:#1e40af;line-height:1.7;margin-bottom:10px">💡 ${escHtml(d.kullanim)}</div>`:''}
+    ${d.alternatifler&&d.alternatifler.length?`<div style="font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">🔄 Alternatifler</div>${d.alternatifler.map(a=>`<div style="background:#f1f5f9;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;color:#334155;margin-bottom:4px">${escHtml(a)}</div>`).join('')}`:''}
+    ${d.hata?`<div style="background:#fee2e2;border-radius:10px;padding:12px;font-size:12px;color:#991b1b;font-weight:600;margin-top:8px">⚠️ ${escHtml(d.hata)}</div>`:''}`;
+
+  const quizItem = d.quiz && d.quiz[0];
+  const quizHtml = quizItem ? buildMiniQuiz(id, quizItem) : `<div style="font-size:13px;color:#94a3b8;text-align:center;padding:20px">Test sorusu oluşturulamadı.</div>`;
+
+  const tabContents = {telaffuz:telaffuzHtml, kelimeler:kelimelerHtml, dilbilgisi:dilbilgisiHtml, quiz:quizHtml};
+
+  const panelId = id === "daily" ? "daily-teacher-panel" : `tp-${id}`;
+  const wrapStyle = id === "daily" ? 'style="margin-bottom:14px"' : '';
+
+  return `<div class="teacher-panel" id="${panelId}" ${wrapStyle}>
+    <div class="teacher-tabs">
+      ${tabs.map(t=>`<button class="teacher-tab" id="tab-${id}-${t}" onclick="activateTab('${id}','${t}')">${tabLabels[t]}</button>`).join("")}
+    </div>
+    <div class="teacher-body">
+      ${tabs.map(t=>`<div class="teacher-section" id="sec-${id}-${t}">${tabContents[t]}</div>`).join("")}
+    </div>
+  </div>`;
+}
+
+function activateTab(id, tab) {
+  ["telaffuz","kelimeler","dilbilgisi","quiz"].forEach(t => {
+    const tabEl = document.getElementById(`tab-${id}-${t}`);
+    const secEl = document.getElementById(`sec-${id}-${t}`);
+    if(tabEl) tabEl.classList.toggle("active", t===tab);
+    if(secEl) secEl.classList.toggle("active", t===tab);
+  });
+}
+
+// ── MİNİ QUIZ ──
+function buildMiniQuiz(id, q) {
+  const opts = [q.dogru, ...q.yanlis].sort(()=>Math.random()-.5);
+  return `<div class="mini-quiz">
+    <div class="mini-quiz-q">${escHtml(q.soru)}</div>
+    <div class="mini-quiz-opts" id="quiz-opts-${id}">
+      ${opts.map(o=>`<button onclick="checkQuiz('${id}','${escHtml(o).replace(/'/g,"\\'")}','${escHtml(q.dogru).replace(/'/g,"\\'")}',this)">${escHtml(o)}</button>`).join("")}
+    </div>
+    <div class="mini-quiz-result" id="quiz-result-${id}"></div>
+  </div>`;
+}
+
+function checkQuiz(id, selected, correct, btn) {
+  const opts = document.getElementById(`quiz-opts-${id}`);
+  const result = document.getElementById(`quiz-result-${id}`);
+  if (!opts || opts.dataset.answered) return;
+  opts.dataset.answered = "1";
+  opts.querySelectorAll("button").forEach(b => {
+    b.disabled = true;
+    if (b.textContent === correct) b.classList.add("correct");
+  });
+  if (selected === correct) {
+    result.textContent = "✅ Doğru!"; result.style.color = "#065f46";
+  } else {
+    btn.classList.add("wrong");
+    result.textContent = `❌ Yanlış. Doğru: "${correct}"`; result.style.color = "#991b1b";
+  }
+}
+
+// ── SES CACHE — IndexedDB ──
+const AUDIO_DB_NAME = "vaksozluk-audio";
+const AUDIO_DB_VERSION = 1;
+const AUDIO_STORE = "tts-cache";
+let audioDB = null;
+
+async function openAudioDB() {
+  if (audioDB) return audioDB;
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(AUDIO_DB_NAME, AUDIO_DB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(AUDIO_STORE)) {
+        db.createObjectStore(AUDIO_STORE, { keyPath: "text" });
+      }
+    };
+    req.onsuccess = e => { audioDB = e.target.result; resolve(audioDB); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getCachedAudio(text) {
+  try {
+    const db = await openAudioDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(AUDIO_STORE, "readonly");
+      const req = tx.objectStore(AUDIO_STORE).get(text);
+      req.onsuccess = () => resolve(req.result ? req.result.pcmData : null);
+      req.onerror = () => resolve(null);
+    });
+  } catch(e) { return null; }
+}
+
+async function setCachedAudio(text, pcmData) {
+  try {
+    const db = await openAudioDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(AUDIO_STORE, "readwrite");
+      tx.objectStore(AUDIO_STORE).put({ text, pcmData, ts: Date.now() });
+      tx.oncomplete = () => { updateCacheCount(); resolve(); };
+      tx.onerror = () => resolve();
+    });
+  } catch(e) {}
+}
+
+async function updateCacheCount() {
+  try {
+    const db = await openAudioDB();
+    const tx = db.transaction(AUDIO_STORE, "readonly");
+    const req = tx.objectStore(AUDIO_STORE).count();
+    req.onsuccess = () => {
+      const el = document.getElementById("cacheCount");
+      if (el) el.textContent = req.result;
+    };
+  } catch(e) {}
+}
+
+async function clearAudioCache() {
+  try {
+    const db = await openAudioDB();
+    await new Promise((resolve) => {
+      const tx = db.transaction(AUDIO_STORE, "readwrite");
+      tx.objectStore(AUDIO_STORE).clear();
+      tx.oncomplete = resolve;
+    });
+    updateCacheCount();
+    showToast("🗑️ Ses önbelleği temizlendi");
+  } catch(e) { showToast("❌ Önbellek temizlenemedi"); }
+}
+
+// ── SES — Gemini TTS (doğal Hollandaca) ──
+let audioCtx = null;
+let currentSource = null;
+
+function getAudioCtx() {
+  if (!audioCtx || audioCtx.state === "closed") {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+  }
+  return audioCtx;
+}
+
+async function speakText(text, key) {
+  const btn = key ? document.querySelector(`[data-speak="${key}"]`) : null;
+  if (btn) btn.classList.add("playing");
+  if (currentSource) { try { currentSource.stop(); } catch(e){} currentSource = null; }
+
+  try {
+    // ── 1. ÖNCE CACHE'E BAK ──
+    let pcmArray = await getCachedAudio(text);
+    let fromCache = !!pcmArray;
+
+    if (!pcmArray) {
+      // ── 2. CACHE YOK → API'YE GİT ──
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `Lees deze Nederlandse zin voor met een duidelijk, natuurlijk en warm Nederlands accent. Spreek rustig en duidelijk: ${text}` }] }],
+            generationConfig: {
+              responseModalities: ["AUDIO"],
+              speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+            }
+          })
+        }
+      );
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+
+      const b64 = data.candidates[0].content.parts[0].inlineData.data;
+      const binary = atob(b64);
+      pcmArray = new Int16Array(binary.length / 2);
+      for (let i = 0; i < binary.length; i += 2) {
+        pcmArray[i/2] = (binary.charCodeAt(i+1) << 8) | binary.charCodeAt(i);
+      }
+      // ── 3. CACHE'E KAYDET ──
+      setCachedAudio(text, Array.from(pcmArray));
+    } else {
+      // Cache'den gelen array'i Int16Array'e çevir
+      pcmArray = new Int16Array(pcmArray);
+    }
+
+    // ── 4. SESİ ÇAL ──
+    const ctx = getAudioCtx();
+    if (ctx.state === "suspended") await ctx.resume();
+    const buffer = ctx.createBuffer(1, pcmArray.length, 24000);
+    const channel = buffer.getChannelData(0);
+    for (let i = 0; i < pcmArray.length; i++) channel[i] = pcmArray[i] / 32768;
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    currentSource = source;
+    source.start();
+    source.onended = () => {
+      if (btn) btn.classList.remove("playing");
+      currentSource = null;
+    };
+
+    if (fromCache) showToast("💾 Önbellekten çalınıyor");
+
+  } catch(e) {
+    console.warn("Gemini TTS hata, tarayıcı sesine düşülüyor:", e.message);
+    if (btn) btn.classList.remove("playing");
+    const ut = new SpeechSynthesisUtterance(text);
+    ut.lang = "nl-NL"; ut.rate = 0.82;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(ut);
+    showToast("⚠️ Gemini TTS başarısız, tarayıcı sesi kullanıldı");
+  }
+}
+
+// ── FAVORİ ──
+function toggleFav(nl) {
+  const i = favorites.indexOf(nl);
+  if (i===-1) { favorites.push(nl); showToast("⭐ Favorilere eklendi"); }
+  else { favorites.splice(i,1); showToast("🗑️ Favorilerden çıkarıldı"); }
+  saveState();
+  document.getElementById("statFavs").textContent = favorites.length;
+  if (currentCat==="Favoriler") renderCards();
+  else document.querySelectorAll(".fav-btn").forEach(b=>{b.textContent=favorites.includes(b.dataset.nl)?"⭐":"☆";});
+}
+
+// ── KATEGORİ ──
+function initCategories() {
+  const cats = ["Hepsi","Favoriler",...new Set(DATA.map(d=>d.cat))];
+  document.getElementById("catButtons").innerHTML = cats.map(cat=>
+    `<button class="cat-btn${cat===currentCat?' active':''}" onclick="selectCat('${cat}',event)">
+      ${cat==="Favoriler"?"⭐ ":""}${cat}
+    </button>`).join("");
+}
+function selectCat(cat,e) {
+  currentCat = cat;
+  document.querySelectorAll(".cat-btn").forEach(b=>b.classList.remove("active"));
+  e.target.classList.add("active");
+  renderCards();
+}
+
+// ── QUIZ ──
+function toggleQuiz() {
+  quizMode = !quizMode; quizFlipped = new Set();
+  const btn = document.getElementById("quizToggle");
+  btn.textContent = quizMode ? "📖 Liste" : "🎯 Quiz";
+  btn.classList.toggle("active", quizMode);
+  renderCards();
+}
+function toggleQuizCard(idx) {
+  if (!quizMode) return;
+  const item = DATA[idx];
+  const el = document.querySelector(`[data-cardcontent="${idx}"]`);
+  if (!el) return;
+  if (quizFlipped.has(idx)) {
+    quizFlipped.delete(idx);
+    el.innerHTML = `<div class="card-nl" style="padding-right:0">${item.nl}</div><div class="quiz-hint">Türkçeyi görmek için tıkla →</div>`;
+  } else {
+    quizFlipped.add(idx);
+    el.innerHTML = `<div style="font-size:15px;font-weight:700;color:#1e293b;padding-top:6px;border-top:1px solid #f1f5f9">${item.tr}</div><div class="quiz-hint">← Gizlemek için tıkla</div>`;
+  }
+}
+
+// ── KARTLAR ──
+function renderCards() {
+  teacherOpen = new Set(); teacherCache = {};
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const container = document.getElementById("cardsContainer");
+  const filtered = DATA.map((d,i)=>({...d,idx:i})).filter(item=>{
+    const m = !search || item.nl.toLowerCase().includes(search) || item.tr.toLowerCase().includes(search);
+    const c = currentCat==="Hepsi"?true:currentCat==="Favoriler"?favorites.includes(item.nl):item.cat===currentCat;
+    return m && c;
+  });
+  document.getElementById("resultCount").textContent = `${filtered.length} ifade`;
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">${currentCat==="Favoriler"?"⭐":"🔍"}</div><div class="empty-text">${currentCat==="Favoriler"?"Henüz favori eklemedin.":"Sonuç bulunamadı."}</div></div>`;
+    return;
+  }
+  container.innerHTML = filtered.map((item,i)=>{
+    const colors = CAT_COLORS[item.cat]||{bg:"#f1f5f9",text:"#334155"};
+    const isFav = favorites.includes(item.nl);
+    const sk = `c-${item.idx}`;
+    const nlE = item.nl.replace(/'/g,"\\'");
+    const content = quizMode
+      ? `<div class="card-nl" style="padding-right:0">${item.nl}</div><div class="quiz-hint">Türkçeyi görmek için tıkla →</div>`
+      : `<div class="card-nl">${item.nl}</div><div class="card-tr">${item.tr}</div>`;
+    return `
+      <div class="card${quizMode?' quiz':''}" data-cardidx="${item.idx}" onclick="${quizMode?`toggleQuizCard(${item.idx})`:''}" style="animation-delay:${Math.min(i*.025,.25)}s">
+        <div class="card-meta">
+          <span class="card-num">#${item.idx+1}</span>
+          <span class="card-cat" style="background:${colors.bg};color:${colors.text}">${item.cat}</span>
+        </div>
+        <div data-cardcontent="${item.idx}">${content}</div>
+        <div class="card-actions">
+          <button class="speak-btn" data-speak="${sk}" onclick="event.stopPropagation();speakText('${nlE}','${sk}')" title="Sesli oku">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </button>
+          <button class="fav-btn" data-nl="${item.nl.replace(/"/g,'&quot;')}" onclick="event.stopPropagation();toggleFav(this.dataset.nl)">${isFav?"⭐":"☆"}</button>
+          <button class="teacher-btn" onclick="event.stopPropagation();askTeacher(${item.idx})" title="Gramer analizi">🎓</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
+
+// ── INIT ──
+loadState();
+updateCacheCount();
+initDaily();
+initCategories();
+renderCards();
+document.getElementById("statTotal").textContent = DATA.length;
+document.getElementById("statFavs").textContent = favorites.length;
+document.getElementById("statSeen").textContent = seenHistory.length;
+</script>
+</body>
+</html>
